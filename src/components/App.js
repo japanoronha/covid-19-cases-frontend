@@ -1,5 +1,9 @@
 import React from 'react';
 import axios from 'axios';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis } from 'recharts';
+
+
+
 
 const api = {
     baseURL : "http://localhost:3000",
@@ -33,7 +37,6 @@ class App extends React.Component {
         .then(async (res) => {
             cases = await getLastFifteenDays(Object.values(res.data));
             sumOfAllDeathsAndCases(Object.values(res.data));
-
         });
         
         
@@ -43,7 +46,15 @@ class App extends React.Component {
     
     render() {
         return (
-            <h1>Hello </h1>
+            <div>
+                <LineChart width={600} height={300} data={cases}>
+                    <Line type="monotone" dataKey="deaths" stroke="#8884d8" />
+                    <CartesianGrid stroke="#ccc" />
+                    <XAxis dataKey="dateRep" />
+                    <YAxis />
+                </LineChart>
+                <h1>{sumDeaths}</h1>
+            </div>
         )
     }
 };
