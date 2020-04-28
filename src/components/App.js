@@ -1,7 +1,8 @@
 import React from 'react';
+import Footer from 'rc-footer';
+import 'rc-footer/assets/index.css';
 import axios from 'axios';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis } from 'recharts';
-
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 
 
@@ -9,15 +10,21 @@ const api = {
     baseURL : "http://localhost:3000",
     casos : "/cases"
 };
-let sumDeaths = 0, sumCases = 0;
-let cases = [];
 
 function sumOfAllDeathsAndCases(array){
 
+
+    let deaths = 0, cases = 0, death = 0;
+
     array.forEach(element => {
-        sumDeaths += Number(element.deaths);
-        sumCases += Number(element.cases);
+        if(Number(element.deaths) > death){
+            death = Number(element.deaths);
+        }
+        deaths += Number(element.deaths);
+        cases += Number(element.cases);
     });
+
+    return [deaths, cases, death]
 }
 
 function getLastFifteenDays(array) {
@@ -31,30 +38,60 @@ function getLastFifteenDays(array) {
 
 class App extends React.Component {
     
+    constructor(props) {
+        super(props);
+        this.state = {
+            cases: [],
+            sumDeaths: 0,
+            sumCases: 0,
+            dayWithMore: 0
+        };
+      }
+    
     async componentDidMount(){
         await axios
         .get(api.baseURL + api.casos)
         .then(async (res) => {
-            cases = await getLastFifteenDays(Object.values(res.data));
-            sumOfAllDeathsAndCases(Object.values(res.data));
+            this.setState({ cases: await getLastFifteenDays(Object.values(res.data)).reverse()});
+            let [deaths, casess, death] = sumOfAllDeathsAndCases(Object.values(res.data));
+            this.setState({sumCases: casess});
+            this.setState({sumDeaths: deaths});
+            this.setState({dayWithMore: death});
         });
         
         
-                
-
     }
     
     render() {
         return (
             <div>
-                <LineChart width={600} height={300} data={cases}>
-                    <Line type="monotone" dataKey="deaths" stroke="#8884d8" />
-                    <CartesianGrid stroke="#ccc" />
-                    <XAxis dataKey="dateRep" />
-                    <YAxis />
+            <div id="principal" style={{
+                position: 'absolute', left: '50%', top: '50%',
+                transform: 'translate(-50%, -50%)'
+            }}>
+                
+
+                <h1>Mortes nos últimos 15 dias em território brasileiro</h1>
+                <LineChart width={900} height={500} data={this.state.cases}
+                        margin={{top: 5, right: 30, left: 20, bottom: 5}}
+                        >
+                    <CartesianGrid strokeDasharray="3 3"/>
+                    <XAxis dataKey="dateRep"/>
+                    <YAxis yAxisId="left" type="number" domain={[0,this.state.dayWithMore+50]}/>
+                    <Tooltip/>
+                    <Legend />
+                    <Line yAxisId="left" type="monotone" dataKey="deaths" stroke="#8884d8" activeDot={{r: 8}}/>
                 </LineChart>
-                <h1>{sumDeaths}</h1>
+                <h1>Soma de todas as mortes no Brasil: {this.state.sumDeaths}</h1>
+                <br></br>
+                <br></br>
+                <p style={{position: 'absolute', bottom:0}}> Feito por : João Pedro Noronha </p> <a href="https://www.linkedin.com/in/joão-pedro-noronha-0750b1161">Visite meu Likedin</a>
+                <br></br>
+                
             </div>
+            
+            
+        </div>
         )
     }
 };
