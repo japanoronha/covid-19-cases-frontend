@@ -7,7 +7,7 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'r
 
 
 const api = {
-    baseURL : "http://covid19brazilbackend.herokuapp.com",
+    baseURL : "https://covid19brazilbackend.herokuapp.com",
     casos : "/cases"
 };
 
