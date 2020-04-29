@@ -1,5 +1,5 @@
 import React from 'react';
-import Footer from 'rc-footer';
+import './styles.css';
 import 'rc-footer/assets/index.css';
 import axios from 'axios';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
@@ -7,7 +7,7 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'r
 
 
 const api = {
-    baseURL : "http://localhost:3000",
+    baseURL : "http://covid19brazilbackend.herokuapp.com",
     casos : "/cases"
 };
 
@@ -65,14 +65,10 @@ class App extends React.Component {
     render() {
         return (
             <div>
-            <div id="principal" style={{
-                position: 'absolute', left: '50%', top: '50%',
-                transform: 'translate(-50%, -50%)'
-            }}>
                 
-
                 <h1>Mortes nos últimos 15 dias em território brasileiro</h1>
-                <LineChart width={900} height={500} data={this.state.cases}
+                <LineChart className="chart"
+                        width={900} height={500} data={this.state.cases}
                         margin={{top: 5, right: 30, left: 20, bottom: 5}}
                         >
                     <CartesianGrid strokeDasharray="3 3"/>
@@ -85,13 +81,13 @@ class App extends React.Component {
                 <h1>Soma de todas as mortes no Brasil: {this.state.sumDeaths}</h1>
                 <br></br>
                 <br></br>
-                <p style={{position: 'absolute', bottom:0}}> Feito por : João Pedro Noronha </p> <a href="https://www.linkedin.com/in/joão-pedro-noronha-0750b1161">Visite meu Likedin</a>
-                <br></br>
+                <div className="footer" >
+                    <p> Feito por : João Pedro Noronha </p>
+                    <a href="https://www.linkedin.com/in/joão-pedro-noronha-0750b1161">Visite meu Likedin</a>
+                </div>
                 
             </div>
             
-            
-        </div>
         )
     }
 };
